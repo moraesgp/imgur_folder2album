@@ -1,20 +1,30 @@
 # imgur_folder2album
 Imgur client that uploads images to imgur transforming directories (folders) in albums
 
-Depends on:
+## Depends on:
 
-Curl 7.35.0 or higher
-FreeImage 3.15.4 or higher
+  * Curl 7.35.0 or higher
+  * FreeImage 3.15.4 or higher
 
 On Ubuntu just run
 
-sudo apt-get install \
-	libcurl3 libcurl3-dbg libcurl3-gnutls libcurl4-gnutls-dev \
-	libfreeimage3 libfreeimage-dev libfreeimage3-dbg
+    sudo apt-get install \
+    	libcurl3 libcurl3-dbg libcurl3-gnutls libcurl4-gnutls-dev \
+    	libfreeimage3 libfreeimage-dev libfreeimage3-dbg
 
-then build using make
+## Build
 
-to develop use make runme. It will create an executable binary called runme that contains gdb symbols to debug
+just run
+
+    make
+
+to develop use 
+
+    make runme
+	
+It will create an executable binary called runme that contains gdb symbols to debug
+
+## Uploading images
 
 to upload images, organize them in a folder structure. The structure below will be used as an example.
 
@@ -61,10 +71,10 @@ to upload images, organize them in a folder structure. The structure below will 
                                |-- photo_0000000011.jpg
                                `-- photo_0000000012.jpg
 
-directories another_dir_name, some_dir and whatever will be ignored.
+directories *another_dir_name*, *some_dir* and *whatever* will be ignored.
 
-Two albums will be created: 2012_07 and 2012_06. Note there are two directories named 2012_07. Their pictures will be combined into only one album 2012_07.
+Two albums will be created: *2012_07* and *2012_06*. Note there are two directories named 2012_07. Their pictures will be combined into only one album 2012_07.
 
-Picture P1050250.JPG and P1050257.JPG will be uploaded but won't be added to any album because they are in the root directory
+Picture *P1050250.JPG* and *P1050257.JPG* will be uploaded but won't be added to any album because they are in the root directory
 
 
