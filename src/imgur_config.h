@@ -2,8 +2,8 @@
 #define __CONFIG__h 1
 
 #define VERSION_NUMBER "0.99"
-#define CONFIG_CLIENT_ID "a9dc0790f071c1f"
-#define CONFIG_CLIENT_SECRET "928a1f1db17543eb1f2d4545aff8a2eba8e25a06"
+#define CONFIG_CLIENT_ID "aa814050621ea14"
+#define CONFIG_CLIENT_SECRET "0fa4854a020bf6bc51419beed04281a7a3f8f192"
 
 #define CONFIG_IMGUR_AUTHORIZE_URL "https://api.imgur.com/oauth2/authorize"
 #define CONFIG_IMGUR_TOKEN_URL "https://api.imgur.com/oauth2/token"
