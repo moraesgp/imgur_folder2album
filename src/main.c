@@ -3,9 +3,14 @@
 #include <stdlib.h>
 #include <string.h>
 #include <time.h>
+#if defined(_WIN32) || defined(_WIN64)
+#include "msdirent.h"
+#include <io.h>
+#else
 #include <dirent.h>
-#include <sys/stat.h>
 #include <unistd.h>
+#endif
+#include <sys/stat.h>
 #include <curl/curl.h>
 #include <FreeImage.h>
 #include "imgur_config.h"
@@ -71,20 +76,23 @@ int file_finder(api_config *config, char *path, char *parent_dir)
 	DWORD size;
 	photo_linked_list *temp, *head, *killme, *last;
 	char *album_id;
-	head = (photo_linked_list*) malloc(sizeof(photo_linked_list));
-	memset(head->photo_path, 0, DIRPATHSIZE);
-	head->next = NULL;
-	DIR *dp = NULL;
+	DIR *dp;
 	struct stat st;
-	struct dirent *dptr = NULL;
+	struct dirent *dptr;
 	char filename[DIRPATHSIZE];
 	char **dirs_array;
 	char **files_array;
 	int dirs_array_size, files_array_size, dirs_index, files_index, i, upload_tries;
-	upload_tries = 0;
 
+	dptr = NULL;
+	upload_tries = 0;
+	head = (photo_linked_list*) malloc(sizeof(photo_linked_list));
+	memset(head->photo_path, 0, DIRPATHSIZE);
+	head->next = NULL;
+	dp = NULL;
 	last = head;
 	dirs_array_size = files_array_size = dirs_index = files_index = 0;
+
 	throw_error(NULL == (dp = opendir(path)), CANT_OPEN_DIR, "Could not open %s", path);
 	log_info("Entering %s", path);
 	while(NULL != (dptr = readdir(dp))) {
@@ -93,7 +101,7 @@ int file_finder(api_config *config, char *path, char *parent_dir)
 		if(0 == strcmp("..", dptr->d_name))
 			continue;
 		strncpy(filename, path, DIRPATHSIZE);
-		strncat(filename, "/", DIRPATHSIZE);
+		strncat(filename, PATH_SEPARATOR, DIRPATHSIZE);
 		strncat(filename, dptr->d_name, DIRPATHSIZE);
 
 		stat(filename, &st);
@@ -140,7 +148,7 @@ int file_finder(api_config *config, char *path, char *parent_dir)
 	qsort(files_array, files_array_size, sizeof(char*), compare_strings);
 
 	for(i=0; i<dirs_array_size; i++) {
-		file_finder(config, dirs_array[i], &dirs_array[i][strlen(path) + sizeof(char)]);
+		throw_error(!file_finder(config, dirs_array[i], &dirs_array[i][strlen(path) + sizeof(char)]), last_error, "problem calling file_finder");
 		free(dirs_array[i]);
 	}
 
@@ -206,13 +214,15 @@ int main()
 {
 	DIR *dirtry = NULL;
 	api_config config_data;
+	curl_version_info_data *curl_info_data;
+
 	curl_global_init(CURL_GLOBAL_ALL);
 	init_idname_mylist();
 	FreeImage_Initialise(TRUE);
 	FreeImage_SetOutputMessage(FreeImageErrorHandler);
 
+	curl_info_data = curl_version_info(CURLVERSION_NOW);
 	log_info("Imgur Folder2Album Uploader " VERSION_NUMBER);
-	curl_version_info_data *curl_info_data = curl_version_info(CURLVERSION_NOW);
 	log_info("Using Curl %s", curl_info_data->version);
 	log_info("Using FreeImage %s", FreeImage_GetVersion());
 

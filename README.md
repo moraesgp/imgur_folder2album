@@ -18,11 +18,19 @@ just run
 
     make
 
-to develop use 
+to develope use 
 
     make runme
 	
 It will create an executable binary called runme that contains gdb symbols to debug
+
+On Windows using Visual Studio C compilers run the following to generate a debug version
+
+    nmake /NOLOGO /F makefile.nmake
+
+Or the following to generate a production version
+
+	nmake /NOLOGO /F makefile.nmake DBGCFLAGS= DBGLINKERFLAGS=
 
 ## Uploading images
 

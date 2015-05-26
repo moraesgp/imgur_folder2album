@@ -1,0 +1,39 @@
+LINKER=link.exe
+CC=cl.exe
+LIBS=/DEFAULTLIB:lib\FreeImage /DEFAULTLIB:lib\libcurl.lib
+
+SRCDIR=src
+INCLUDEDIR=include
+OBJECTS=obj\cJSON.obj \
+	obj\curl_helper.obj \
+	obj\idname.obj \
+	obj\imgur_helper.obj \
+	obj\main.obj \
+	obj\resize_image.obj
+
+DBGCFLAGS=/Zi /Fdrunme.PDB
+DBGLINKERFLAGS=/DEBUG /PDB:runme.PDB
+
+CFLAGS=/I$(SRCDIR) /I$(INCLUDEDIR) /O2 /D _WIN64
+
+TARGET=build/imgur.exe
+
+$(TARGET): $(OBJECTS)
+!IF !EXIST (build)
+	 -mkdir build
+	 -copy dll\* build
+!ENDIF
+	$(LINKER) /NOLOGO /OUT:"$@" $(DBGLINKERFLAGS) $(LIBS) $(OBJECTS)
+
+$(OBJECTS): src\$$(@B).c
+!IF !EXIST (obj)
+	 -mkdir obj
+!ENDIF
+	$(CC) /c $(DBGCFLAGS) $(CFLAGS) /Fo$@ src\$(@B).c
+
+gabriel:
+	@echo GABRIEL $(LIBS) $(SOURCES) $(OBJECTS)
+
+clean:
+	-rmdir /S /Q build obj
+

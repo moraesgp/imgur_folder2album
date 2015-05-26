@@ -10,12 +10,13 @@
 
 static error_code get_imgur_api_error(cJSON *imgur_json, char *error_message)
 {
+	char *temp_print;
 	if(!imgur_json) {
 		strcpy(error_message, "json is invalid");
 		return JSON_PARSE_ERROR;
 	}
 
-	char *temp_print = cJSON_Print(imgur_json);
+	temp_print = cJSON_Print(imgur_json);
 	log_info("imgur_json: %s", temp_print);
 	free(temp_print);
 
@@ -319,7 +320,8 @@ int update_albuns_list(api_config *config_data)
 			c = cJSON_GetObjectItem(imgur_album_list, "data")->child;
 			while(c) {
 				// printf("|%s| <==> |%s|\n", cJSON_GetObjectItem(c, "id")->valuestring, cJSON_GetObjectItem(c, "title")->valuestring);
-				add_idname(cJSON_GetObjectItem(c, "id")->valuestring, cJSON_GetObjectItem(c, "title")->valuestring);
+				throw_error(!add_idname(cJSON_GetObjectItem(c, "id")->valuestring, cJSON_GetObjectItem(c, "title")->valuestring), last_error,
+					"error calling add_idname");
 				c = c->next;
 			}
 		}
@@ -383,6 +385,8 @@ int get_album_by_name(api_config *config_data, char *albumname, char **albumid)
 			if(OUTDATE_ACCESS_TOKEN == last_error) {
 				log_warn("access_token esta desatualizado");
 				throw_error(!get_access_token(config_data), APP_ERROR, "error calling get_access_token");
+			} else {
+				throw_error(ALBUM_NAME_ISNULL == last_error, ALBUM_NAME_ISNULL, "Album name is null. Fix it and the run again");
 			}
 		}
 	}

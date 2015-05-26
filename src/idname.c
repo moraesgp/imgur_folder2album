@@ -36,6 +36,7 @@ add_idname(char *id, char *name)
 {
 	unsigned int **mylocalint;
 	char *temppointer;
+	throw_error(NULL == name, ALBUM_NAME_ISNULL, "Album name is null");
 	while(2 * sizeof(int) + strlen(id) + strlen(name) + 2 > mylist_malloc_size - **myint) {
 		// must increase malloc
 		mylist_malloc_size *= 2;
@@ -72,6 +73,8 @@ add_idname(char *id, char *name)
 	**myint = (unsigned int) (temppointer - mylist);
 	// printf("tamnho total ate agora %u\n", **myint);
 	return 1;
+error:
+	return 0;
 }
 
 int

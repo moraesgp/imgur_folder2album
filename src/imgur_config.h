@@ -20,6 +20,16 @@
 
 #define IMAGE_SQUARE_SIZE 768
 
+#if defined(_WIN32) || defined(_WIN64)
+  #define snprintf _snprintf
+  #define vsnprintf _vsnprintf
+  #define strcasecmp _stricmp
+  #define strncasecmp _strnicmp
+  #define PATH_SEPARATOR "\\"
+#else
+	#define PATH_SEPARATOR "/"
+#endif
+
 struct s_api_config {
 	char pin[WORD1SIZE];
 	char access_token[WORD2SIZE];
