@@ -13,9 +13,6 @@ $(info buildando $(OBJECTS))
 DEVCFLAGS=-ggdb -Wall -Wextra -I$(SRCDIR) -rdynamic -DNDEBUG $(OPTFLAGS)
 CFLAGS=-O2 -I$(SRCDIR) $(OPTFLAGS)
 
-TEST_SRC=$(wildcard tests/*_tests.c)
-TESTS=$(patsubst %.c,%,$(TEST_SRC))
-
 TARGET=build/imgur
 DEVTARGET=runme
 
@@ -45,26 +42,10 @@ obj/resize_image.o: $(SRCDIR)/resize_image.c $(SRCDIR)/resize_image.h
 	$(CC) -c $(CFLAGS) -o $@ $(SRCDIR)/resize_image.c
 
 build:
-	@mkdir -p build
-	@mkdir -p $(OBJDIR)
+	-mkdir -p build
+	-mkdir -p $(OBJDIR)
 
-# The Unit Tests
-.PHONY: tests
-tests: CFLAGS += $(TARGET)
-tests: $(TESTS)
-	sh ./tests/runtests.sh
-
-valgrind:
-	VALGRIND="valgrind --log-file=/tmp/valgrind-%p.log" $(MAKE)
-
-# The Cleaner
 clean:
-	rm -rf build $(OBJDIR) $(TESTS)
-	rm -f tests/tests.log
-	find . -name '*.gc*' -delete
-	rm -rf `find . -name "*.dSYM" -print`
+	-rm -rf build $(OBJDIR)
+	-rm runme
 
-# The Install
-install: all
-	install -d $(DESTDIR)/$(PREFIX)/lib/
-	install $(TARGET) $(DESTDIR)/$(PREFIX)/lib/
